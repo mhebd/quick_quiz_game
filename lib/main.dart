@@ -1,8 +1,24 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
+import 'package:quick_quiz_game/models/app_config.dart';
 import 'package:quick_quiz_game/pages/home_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await loadConfig();
   runApp(const MyApp());
+}
+
+Future<void> loadConfig() async {
+  String configContent = await rootBundle.loadString('config/appConfig.json');
+  Map configData = jsonDecode(configContent);
+
+  GetIt.instance.registerSingleton<AppConfig>(
+    AppConfig(apiBaseUrl: configData['BASE_API_URL']),
+  );
 }
 
 class MyApp extends StatelessWidget {
