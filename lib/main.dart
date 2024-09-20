@@ -5,10 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:quick_quiz_game/models/app_config.dart';
 import 'package:quick_quiz_game/pages/home_page.dart';
+import 'package:quick_quiz_game/services/http_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await loadConfig();
+  registerHTTPServices();
   runApp(const MyApp());
 }
 
@@ -19,6 +21,10 @@ Future<void> loadConfig() async {
   GetIt.instance.registerSingleton<AppConfig>(
     AppConfig(apiBaseUrl: configData['BASE_API_URL']),
   );
+}
+
+void registerHTTPServices() {
+  GetIt.instance.registerSingleton<HTTPServices>(HTTPServices());
 }
 
 class MyApp extends StatelessWidget {
