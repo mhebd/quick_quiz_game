@@ -1,39 +1,64 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:quick_quiz_game/services/http_services.dart';
 
 class GamePage extends StatefulWidget {
   final String difficulty;
   const GamePage({super.key, required this.difficulty});
 
   @override
-  State<StatefulWidget> createState() => _GamePageState();
+  // ignore: no_logic_in_create_state
+  State<StatefulWidget> createState() => _GamePageState(difficulty: difficulty);
 }
 
 class _GamePageState extends State<GamePage> {
-  _GamePageState();
+  final String difficulty;
   late double deviceHeight, deviceWidth;
+  var http = GetIt.instance.get<HTTPServices>();
+  late List questions;
+  int currentQuestion = 0, rightAnswer = 0;
+
+  _GamePageState({required this.difficulty});
 
   @override
   Widget build(BuildContext context) {
     deviceWidth = MediaQuery.of(context).size.width;
     deviceHeight = MediaQuery.of(context).size.height;
-    return Scaffold(
-        body: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        _renderQuestion(),
-        Column(
-          children: [
-            _trueButton(),
-            const SizedBox(
-              height: 20,
-            ),
-            _falseButton()
-          ],
-        )
-      ],
-    ));
+    return FutureBuilder(
+        future: http.get(difficulty),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            var data = jsonDecode(snapshot.data.toString());
+            questions = data['results'];
+            print(questions[0]);
+            return Scaffold(
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _renderQuestion(),
+                  Column(
+                    children: [
+                      _trueButton(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      _falseButton()
+                    ],
+                  )
+                ],
+              ),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
   }
 
   // Render question

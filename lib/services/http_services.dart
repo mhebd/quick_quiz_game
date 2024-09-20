@@ -13,8 +13,12 @@ class HTTPServices {
   }
 
   Future<Response> get(String difficulty) async {
-    String url = _apiBaseUrl!.replaceFirst('{DIFFICULTY}', difficulty);
-    Response response = await _dio.get(url);
+    String url = _apiBaseUrl!;
+    var response = await _dio.get(url, queryParameters: {
+      "amount": 10,
+      "type": "boolean",
+      "difficulty": difficulty.toLowerCase(),
+    });
     return response;
   }
 }
