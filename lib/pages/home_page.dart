@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
           }),
         );
       },
-      color: const Color.fromRGBO(51, 51, 51, 1.0),
+      color: Colors.blue,
       padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 20),
       child: const Text(
         'Start',

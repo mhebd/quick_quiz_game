@@ -1,9 +1,8 @@
-// ignore_for_file: no_logic_in_create_state, use_build_context_synchronously
+// ignore_for_file: no_logic_in_create_state, use_build_context_synchronously, no_leading_underscores_for_local_identifiers
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:quick_quiz_game/pages/home_page.dart';
 import 'package:quick_quiz_game/services/http_services.dart';
 import 'package:html/parser.dart' as html;
 
@@ -157,27 +156,30 @@ class _GamePageState extends State<GamePage> {
   void _showAnsCurrectionDialog(bool correct) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
+        // Start the timer to close the dialog after 1 second
+        Future.delayed(const Duration(seconds: 1), () {
+          if (Navigator.canPop(dialogContext)) {
+            Navigator.of(dialogContext).pop();
+          }
+        });
+
         // Return the AlertDialog
         return AlertDialog(
           backgroundColor: correct ? Colors.green : Colors.red,
           content: SizedBox(
-            height: 20,
+            height: 40, // Increased height for better visibility
             child: Center(
               child: correct
                   ? const Icon(Icons.check_circle_outline_outlined,
-                      color: Colors.white)
-                  : const Icon(Icons.close_rounded, color: Colors.white),
+                      color: Colors.white, size: 30)
+                  : const Icon(Icons.close_rounded,
+                      color: Colors.white, size: 30),
             ),
           ),
         );
       },
     );
-
-    // Close the dialog after 1 second
-    Future.delayed(const Duration(seconds: 1), () {
-      Navigator.pop(context); // Close the dialog
-    });
   }
 
   // Render final result
@@ -202,12 +204,7 @@ class _GamePageState extends State<GamePage> {
     );
 
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) {
-          return const HomePage();
-        }),
-      );
+      Navigator.popAndPushNamed(context, 'home');
     });
   }
 }
